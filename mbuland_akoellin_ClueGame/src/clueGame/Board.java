@@ -19,6 +19,14 @@ public class Board {
 	
 	private String legendFile = "legend.cfg";
 	private String boardFile = "board.cfg";
+	protected Set<BoardCell> tgts;
+	protected Map<Integer, List<Integer>> adjMap;
+	//defined constants for the board
+	protected static int ROWS;
+	protected static int COLS;
+	private List<BoardCell> cells;
+	private Map<Character, String> rooms;
+	
 	public Board() {
 		rooms = new HashMap<Character, String>();
 		cells = new ArrayList<BoardCell>();
@@ -57,7 +65,6 @@ public class Board {
 		} catch (FileNotFoundException e) {
 			System.err.println("NO LEGEND FOUND");//should never happen, since the function will never be called for a character that isn't in the legend
 		}
-		System.out.println("Rooms: " + rooms);
 	}
 
 	public void parseLayout() {
@@ -87,10 +94,8 @@ public class Board {
 				if (rooms.containsKey(space[i].charAt(0))) {
 					// all is good in the world
 					if (space[i].charAt(0) == 'W') {
-						System.out.println("Found walkway");
 						cells.add(new WalkwayCell());
 					} else {
-						System.out.println("Checking space:" + space[i]);
 						if (space[i].length() == 1) 
 							cells.add(new RoomCell(space[i].charAt(0), DoorDirection.fromString("")));
 						else
@@ -130,9 +135,6 @@ public class Board {
 	public int getNumColumns() {
 		return COLS;
 	}
-
-	private List<BoardCell> cells;
-	private Map<Character, String> rooms;
 	
 	public void loadConfigFiles() {
 		parseLegend();
@@ -146,12 +148,7 @@ public class Board {
 	public BoardCell getCellAt(int index) {
 		return cells.get(index);
 	}
-	protected Set<BoardCell> tgts;
-	protected Map<Integer, List<Integer>> adjMap;
-	//defined constants for the board
-	protected static int ROWS;
-	protected static int COLS;
-
+	
 	/**
 	 * Create adjacency lists for each cell
 	 */
@@ -160,7 +157,6 @@ public class Board {
 		for(int i = 0; i < ROWS*COLS; ++i) {
 			List<Integer> adjList = new ArrayList<Integer>();
 			if (getCellAt(i).isDoorway()) {
-				System.out.println("Cell " + i + " is a doorway with direction " + ((RoomCell)getCellAt(i)).getDoorDirection());
 				switch (((RoomCell)getCellAt(i)).getDoorDirection()) {
 				case DOWN:
 					adjList.add(i+COLS); break;
@@ -174,7 +170,6 @@ public class Board {
 					break;
 				}
 			} else if (getCellAt(i).isWalkway()) {
-				System.out.println("Cell " + i + " is a walkway");
 				// Checks the cell above
 				if ( (i/ COLS) >= 1)
 					adjList.add(i-COLS);
@@ -192,6 +187,7 @@ public class Board {
 					adjList.add(i+1);
 			}
 			int j=0;
+			//checks to see if and non doorway rooms were added and removes them.
 			while (j<adjList.size()) {
 				if (getCellAt(adjList.get(j)).isRoom() && !getCellAt(adjList.get(j)).isDoorway()) {
 					adjList.remove(j);
@@ -199,20 +195,12 @@ public class Board {
 				}
 				j++;
 			}
+			
 			adjMap.put(i, adjList);
 		}
 	}
 	
-	public String getIndex(BoardCell cell) {
-		String s = "(";
-		int index = cells.indexOf(cell);
-		Point p = calcRowColumn(index);
-		s += p.x;
-		s += ",";
-		s += p.y;
-		s += ")";
-		return s;
-	}
+	
 
 	/**
 	 * Calculate the targets that can be moved to from a certain cell with a certain number of moves
@@ -221,50 +209,17 @@ public class Board {
 	 */
 	
 	public void calcTargets(int start, int roll) {
-//		System.out.println("----------------------------------------");
-//		Point startRC = calcRowColumn(start);
-//		System.out.println("At " + startRC.x + "," + startRC.y + " moving " + roll);
-//		List<Integer> targs = new ArrayList<Integer>();
-//		for(int i = startRC.x-roll; i<= startRC.x+roll; ++i) {
-//			for(int j = startRC.y-roll; j <= startRC.y+roll; ++j) {
-//				System.out.println("(" + i + "," + j + ") : " + isOnBoard(i,j)  + " : " + canMoveTo(i,j,startRC.x,startRC.y,roll));
-//				if (isOnBoard(i,j)) {
-//					if (canMoveTo(i, j, startRC.x, startRC.y, roll)) {
-//						targs.add(calcIndex(i, j));
-//					}
-//				}
-//			}
-//			int j=0;
-//			while (j<targs.size()) {
-//				if (getCellAt(targs.get(j)).isRoom() && !getCellAt(targs.get(j)).isDoorway()) {
-//					targs.remove(j);
-//					j--;
-//				}
-//				j++;
-//			}
-//		}
-//		tgts = new HashSet<BoardCell>();
-//		for (Integer i : targs) {
-//			tgts.add(getCellAt(i));
-//			
-//		}
 		List<List<Integer>> alltgts = new ArrayList<List<Integer>>();
 		List<Integer> emptyPath = new ArrayList<Integer>();
 		emptyPath.add(start);
+		//boolean is to not target roomcells inside the room, just the doorway. T means room and not a doorway 
 		calcTargets(start, roll, emptyPath, alltgts, (getCellAt(start).isRoom() && !getCellAt(start).isDoorway()));
 		
 		// now, alltgts should contain every possible valid path
-//		Set<Integer> noDupTgts = new HashSet<Integer>();
 		tgts = new HashSet<BoardCell>();
 		for (List<Integer> li : alltgts) {
 			tgts.add(getCellAt(li.get(li.size()-1)));
 		}
-//		
-//		// noDupTgts has no duplicate targets
-//		tgts = new ArrayList<BoardCell>();
-//		for (Integer i : noDupTgts) {
-//			tgts.add(getCellAt(i));
-//		}
 	}
 	
 	private void calcTargets(int from, int roll, List<Integer> pathsofar, List<List<Integer>> allpaths, boolean startRoom) {
@@ -275,52 +230,16 @@ public class Board {
 			return;
 		}
 		for (Integer dest : getAdjList(from)) {
-			if (!pathsofar.contains(dest) && ( ( ( (getCellAt(dest).isWalkway() || getCellAt(dest).isDoorway() ) && !startRoom) ) || ((getCellAt(dest).isRoom() && !getCellAt(dest).isWalkway() ) ) ) ) {
-				List<Integer> cpPath = new ArrayList<Integer>(pathsofar);
-				cpPath.add(dest);
-				calcTargets(dest, roll-1,cpPath,allpaths, startRoom);
+			if(!startRoom){
+				if (!pathsofar.contains(dest) &&  (getCellAt(dest).isWalkway() || getCellAt(dest).isDoorway() ) ) {
+					List<Integer> cpPath = new ArrayList<Integer>(pathsofar);
+					cpPath.add(dest);
+					calcTargets(dest, roll-1,cpPath,allpaths, startRoom);
+				}
 			}
 		}
 	}
-	
-	/**
-	 * Checks an ABSOLUTE position to see if it's on the board
-	 * @param row
-	 * @param col
-	 * @return
-	 */
-	public boolean isOnBoard(int row, int col) {
-		return 0 <= row && row < ROWS && 0 <= col && col < COLS;
-	}
-	
-	/**
-	 * Checks an the ABSOLUTE positions of a row,col to see if it can be moved to from startRow,startCol
-	 * @param row
-	 * @param col
-	 * @param startRow
-	 * @param startCol
-	 * @param move
-	 * @return
-	 */
-	public boolean canMoveTo(int row, int col, int startRow, int startCol, int move) {
-		if (row == startRow && col == startCol) {
-			System.out.println("Can't move to self");
-			return false;
-		}
-		
-		if (Math.abs(startRow-row) + Math.abs(startCol-col) > move) {
-			System.out.println(Math.abs(startRow-row) + "," + Math.abs(startCol-col) + "  Can't move further than move");
-			return false;
-		}
-		
-		if ((Math.abs(startRow-row) + Math.abs(startCol-col))%2 != move%2) {
-			System.out.println("Can't move to an opposite odd/even");
-			return false;
-		}
-		return true;
-	}
-	
-	
+
 	/**
 	 * Get the set of all targets that were calculated in calcTargets
 	 * @return

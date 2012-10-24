@@ -1,0 +1,10 @@
+1) in Board class, moved all instance variable declaration to the top of the class.
+	some of them were mixed with in the code.
+2) deleted the getIndex method of board and subsequent calls to it. Only needed to see if
+	debugging preposess. 
+3) cleaned up the console prints, that were for debigging, but is not needed now.
+4) deleted CanMoveTo function because it wasn't being used
+5) deleted whole sections of code in calcsection becuase they were commented out, due to using
+	a different way to calc them.
+6) changed the calcTargets if statemnet to clean it up. It was too long and not needed. shortened it up.
+7) remove function to see it's onBoard because wasn't used

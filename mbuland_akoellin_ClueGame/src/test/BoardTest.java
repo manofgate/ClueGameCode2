@@ -114,6 +114,7 @@ public class BoardTest {
 		assertTrue(testList.contains(brd.calcIndex(16,14)));
 		//one next to room
 		testList = brd.getAdjList(brd.calcIndex(3, 13));
+		System.out.println("sixe " + testList.size());
 		assertEquals(2, testList.size());
 		assertTrue(testList.contains(brd.calcIndex(3,12)));
 		assertTrue(testList.contains(brd.calcIndex(3,14)));
@@ -215,10 +216,6 @@ public class BoardTest {
 		brd.calcTargets(brd.calcIndex(11, 14), 6);
 		testList = brd.getTargets();
 		assertEquals(22, testList.size());
-		System.out.println("Looking at targets for " + 11 + "," + 15);
-		for (BoardCell b : testList) {
-			System.out.println("Target: " + brd.getIndex(b));
-		}
 		assertTrue(testList.contains(brd.getCellAt(9, 14)));
 		assertTrue(testList.contains(brd.getCellAt(13, 14)));
 		assertTrue(testList.contains(brd.getCellAt(15, 14)));

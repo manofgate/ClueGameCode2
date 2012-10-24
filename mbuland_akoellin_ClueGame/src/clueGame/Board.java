@@ -26,14 +26,39 @@ public class Board {
 	protected static int COLS;
 	private List<BoardCell> cells;
 	private Map<Character, String> rooms;
-	
+	private List<ComputerPlayer> comps;
+	private List<Card> cards;
+	private List<Human> human;
 	public Board() {
 		rooms = new HashMap<Character, String>();
 		cells = new ArrayList<BoardCell>();
+		comps = new ArrayList<ComputerPlayer>();
+		cards = new ArrayList<Card>();
+		human = new ArrayList<Human>();
 		loadConfigFiles();
 		calcAdjacencies();
 	}
 	
+	public List<Card> getCards() {
+		return cards;
+	}
+
+	public List<ComputerPlayer> getComps() {
+		return comps;
+	}
+
+	public void setComps(List<ComputerPlayer> comps) {
+		this.comps = comps;
+	}
+
+	public List<Human> getHuman() {
+		return human;
+	}
+
+	public void setHuman(List<Human> human) {
+		this.human = human;
+	}
+
 	public List<BoardCell> getCells() {
 		return cells;
 	}
@@ -139,8 +164,16 @@ public class Board {
 	public void loadConfigFiles() {
 		parseLegend();
 		parseLayout();
+		parsePeople();
+		parseCards();
+	}
+	public void parsePeople(){
+		
 	}
 	
+	public void parseCards(){
+		
+	}
 	public BoardCell getCellAt(int row, int col) {
 		return getCellAt(calcIndex(row, col));
 	}
@@ -273,5 +306,20 @@ public class Board {
 	public Point calcRowColumn(int index) {
 		Point p = new Point(index/COLS, index%COLS);
 		return p;
+	}
+	public void selectAnswer(){
+		
+	}
+	public void deal(ArrayList<String> person){
+		
+	}
+	public void deal(){
+		
+	}
+	public boolean checkAccusation(String person, String weapon, String room){
+		return false;
+	}
+	public void handleSuggestion(String person, String weapon, String room){
+		
 	}
 }

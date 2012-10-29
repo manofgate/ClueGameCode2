@@ -28,8 +28,11 @@ public class GameSetupTests {
 		List<ComputerPlayer> comps = brd.getComps();
 		HumanPlayer hum = brd.getHuman();
 		Assert.assertEquals("Mr. Custard", comps.get(0).getName());
-		Assert.assertEquals("Mrs. Penguin", comps.get(comps.size() - 1));
+		System.out.println(comps.get(comps.size()-1).getName());
+		System.out.println(comps.get(1).getColor());
+		Assert.assertEquals("Mrs. Penguin", comps.get(comps.size()-1).getName());
 		Assert.assertEquals(Color.yellow, comps.get(0).getColor());
+		
 		Assert.assertEquals(Color.BLACK, comps.get(comps.size() - 1).getColor());
 
 		Assert.assertEquals("Mr mober", hum.getName());

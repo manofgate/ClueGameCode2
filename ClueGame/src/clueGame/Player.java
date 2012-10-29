@@ -9,8 +9,9 @@ public abstract class Player {
 	private List<Card> myCards;
 	private Color color;
 
-	public Player() {
-		
+	public Player(String name, Color color) {
+		this.name = name;
+		this.color = color;
 	}
 	
 	public Player(List<Card> myCards) {

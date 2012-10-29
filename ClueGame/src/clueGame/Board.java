@@ -1,8 +1,10 @@
 package clueGame;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +16,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import clueGame.RoomCell.DoorDirection;
+
+
 
 public class Board {
 
@@ -38,7 +42,6 @@ public class Board {
 		cells = new ArrayList<BoardCell>();
 		comps = new ArrayList<ComputerPlayer>();
 		cards = new ArrayList<Card>();
-		human = new HumanPlayer();
 		loadConfigFiles();
 		calcAdjacencies();
 	}
@@ -189,9 +192,41 @@ public class Board {
 	}
 
 	public void parsePeople() {
-
+		FileReader legendReader = null;
+		try {
+			legendReader = new FileReader("computer.txt");
+			Scanner reader = new Scanner(legendReader);
+			while (reader.hasNextLine()) {
+				String line = reader.nextLine();
+				String[] space = line.split(", ");
+				String name = space[0];
+				System.out.println(space[1]);
+				Color c = convertColor(space[1]);
+				System.out.println(c);
+				if(!name.equals("Mr mober")){
+					ComputerPlayer p = new ComputerPlayer(name, c);
+					comps.add(p);
+				}
+				else{
+					human = new HumanPlayer(name, c);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println(e);
+		}
 	}
-
+	// Be sure to trim the color, we don't want spaces around the name
+		public Color convertColor(String strColor) {
+			Color color; 
+			try {     
+				// We can use reflection to convert the string to a color
+				Field field = Class.forName("java.awt.Color").getField(strColor.trim());     
+				color = (Color)field.get(null); } 
+			catch (Exception e) {  
+				color = null; // Not defined } 
+			}
+			return color;
+		}
 	public void parseCards() {
 
 	}

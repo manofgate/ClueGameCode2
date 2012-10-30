@@ -18,8 +18,17 @@ public abstract class Player {
 	}
 	
 	public Card disproveSuggestion(String person, String room, String weapon) {
-		Card c = new Card();
-		return c;
+		List<Card> cards = new ArrayList<Card>();
+		for(Card card : myCards) {
+			if(card.getName().equals(person) || card.getName().equals(room) || card.getName().equals(weapon)) {
+				cards.add(card);
+			}
+		}
+		if(cards.size() == 0) {
+			return null;
+		}
+		Card returnCard = cards.get((int) (Math.random() * cards.size()));
+		return returnCard;
 	}
 
 	public String getName() {

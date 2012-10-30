@@ -346,7 +346,7 @@ public class Board {
 	}
 
 	public void selectAnswer() {
-
+		this.solution = new Solution("Colonel Mustard", "Knife", "Hall");
 	}
 
 	public void deal(ArrayList<String> person) {
@@ -358,11 +358,22 @@ public class Board {
 	}
 
 	public boolean checkAccusation(String person, String weapon, String room) {
-		return false;
+		return person.equals(solution.person) && weapon.equals(solution.weapon) && room.equals(solution.room);
 	}
 
 	public Card handleSuggestion(String person, String weapon, String room) {
-		return null;
+		List<Card> cards = new ArrayList<Card>();
+		if(human.disproveSuggestion(person, room, weapon) != null && turn != 0) {
+			cards.add(human.disproveSuggestion(person, room, weapon));
+		}
+		for(Player player : comps) {
+			if(player.disproveSuggestion(person, room, weapon) != null && turn != comps.indexOf(player) + 1) {
+				cards.add(player.disproveSuggestion(person, room, weapon));
+				break;
+			}
+		}
+		if(cards.size() == 0) return null;
+		return cards.get((int) (Math.random() * cards.size()));
 	}
 
 	public Solution getSolution() {

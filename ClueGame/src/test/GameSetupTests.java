@@ -1,6 +1,7 @@
 package test;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import clueGame.Board;
 import clueGame.Card;
+import clueGame.Card.CardType;
 import clueGame.ComputerPlayer;
 import clueGame.HumanPlayer;
 
@@ -20,7 +22,7 @@ public class GameSetupTests {
 	public void setUp() throws Exception {
 		brd = new Board();
 		brd.loadConfigFiles();
-		brd.deal();
+		//brd.deal();
 	}
 
 	@Test
@@ -59,19 +61,23 @@ public class GameSetupTests {
 		Assert.assertEquals(6, weapon);
 		Assert.assertEquals(9, room);
 		c.setName("Pipe");
+		c.setCardType(CardType.WEAPON);
 		Assert.assertEquals(true, cards.contains(c));
 		c.setName("Subnet Mask");
+		c.setCardType(CardType.ROOM);
 		Assert.assertEquals(true, cards.contains(c));
 		c.setName("Mr. Green");
+		c.setCardType(CardType.PERSON);
 		Assert.assertEquals(true, cards.contains(c));
 	}
 
 	@Test
 	public void dealCards() {
-		brd.deal();
+		brd.deal((ArrayList<Card>) brd.getCards());
 		HumanPlayer human = brd.getHuman();
 		int cardCount = human.getMyCards().size();
-		List<Card> cards = brd.getCards();
+		ArrayList<Card> cards = new ArrayList<Card>();
+		cards.addAll(brd.getCards());
 		for (Card card : human.getMyCards()) {
 			if (!cards.remove(card)) {
 				Assert.fail("Duplicate card!");
@@ -79,11 +85,18 @@ public class GameSetupTests {
 		}
 		List<ComputerPlayer> computers = brd.getComps();
 		for (ComputerPlayer computer : computers) {
+			System.out.println("CardCount " + cardCount);
+			System.out.println(computer.getMyCards().size() - cardCount);
 			Assert.assertEquals(
 					Math.abs(computer.getMyCards().size() - cardCount) <= 1,
 					true);
+			for(Card card: cards){
+				System.out.println("Card: " + card.getName());
+			}
 			for (Card card : computer.getMyCards()) {
+				System.out.println("compCard " + card.getName());
 				if (!cards.remove(card)) {
+					System.out.println("gello" + !cards.remove(card));
 					Assert.fail("Duplicate card!");
 				}
 			}

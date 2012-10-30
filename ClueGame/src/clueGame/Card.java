@@ -27,5 +27,12 @@ public class Card {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+	@Override
+	public boolean equals(Object o){
+		Card c = (Card) o;
+		if(name.equals(c.name) && cardType ==c.cardType){
+			return true;
+		}
+		return false;
+	}
 }

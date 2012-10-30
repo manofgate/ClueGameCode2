@@ -1,0 +1,21 @@
+Candelstick, weapon
+Knife, weapon
+Lead, weapon
+Pipe, weapon
+Revolver, weapon
+Wrench, weapon
+Mr. Custard, person
+Miss Scarlet, person
+Mr mober, person
+Professor Plum, person
+Mr. Green, person
+Mrs. Penguin, person
+IP Gateway, room
+Domain Name Server, room
+Server Closet, room
+Subnet Mask, room
+Traffic Monitor, room
+The Loo, room
+IP Address v6, room
+MAC Address Filter, room
+Study, room

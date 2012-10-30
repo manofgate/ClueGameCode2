@@ -10,11 +10,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import clueGame.Card.CardType;
 import clueGame.RoomCell.DoorDirection;
 
 
@@ -188,7 +190,8 @@ public class Board {
 		parseLegend();
 		parseLayout();
 		parsePeople();
-		parseCards();
+		if(cards.isEmpty())
+			parseCards();
 	}
 
 	public void parsePeople() {
@@ -200,9 +203,7 @@ public class Board {
 				String line = reader.nextLine();
 				String[] space = line.split(", ");
 				String name = space[0];
-				System.out.println(space[1]);
 				Color c = convertColor(space[1]);
-				System.out.println(c);
 				if(!name.equals("Mr mober")){
 					ComputerPlayer p = new ComputerPlayer(name, c);
 					comps.add(p);
@@ -228,7 +229,37 @@ public class Board {
 			return color;
 		}
 	public void parseCards() {
-
+		FileReader legendReader = null;
+		try {
+			legendReader = new FileReader("cards.txt");
+			Scanner reader = new Scanner(legendReader);
+			while (reader.hasNextLine()) {
+				String line = reader.nextLine();
+				String[] space = line.split(", ");
+				String name = space[0];
+				String type = space[1];
+				if(type.equalsIgnoreCase("weapon")){
+					
+					Card c = new Card(CardType.WEAPON, name);
+					cards.add(c);
+				}
+				else if(type.equalsIgnoreCase("person")){
+					
+					Card c = new Card(CardType.PERSON, name);
+					cards.add(c);
+				}
+				else if(type.equalsIgnoreCase("room")){
+					Card c = new Card(CardType.ROOM, name);
+					cards.add(c);
+				}
+				else{
+					
+				}
+			}
+			System.out.println("size " + cards.size());
+		} catch (FileNotFoundException e) {
+			System.out.println(e);
+		}
 	}
 
 	public BoardCell getCellAt(int row, int col) {
@@ -384,8 +415,43 @@ public class Board {
 
 	}
 
-	public void deal(ArrayList<String> person) {
-
+	public void deal(ArrayList<Card> cardList) {
+		ArrayList<Card> cardListN = new ArrayList<Card>();
+		cardListN = (ArrayList<Card>) cardList.clone();
+		Random rand = new Random();
+		int j=-1;
+		ArrayList<Card> pile = new ArrayList<Card>();
+		while(!cardListN.isEmpty()){
+			rand.setSeed(rand.nextLong());
+			int i = rand.nextInt(cardListN.size());
+			if(pile.size()<3){
+				pile.add(cardListN.get(i));
+				cardListN.remove(i);
+			}
+			else{
+				pile.clear();
+				if(j==-1){
+					human.setMyCards(pile);
+					++j;
+					pile.clear();
+				}
+				else{
+					comps.get(j).setMyCards(pile);
+					++j;
+					pile.clear();
+				}
+				pile.clear();
+			}
+		}
+		for(Card c : human.getMyCards()){
+			System.out.println("human C: " + c.getName());
+		}
+		for(ComputerPlayer p : comps){
+			for(Card ca: p.getMyCards()){
+				System.out.println("comps " + ca.getName());
+			}
+			System.out.println("");
+		}
 	}
 
 	public void deal() {

@@ -84,17 +84,18 @@ public class GameSetupTests {
 			}
 		}
 		List<ComputerPlayer> computers = brd.getComps();
+		System.out.println("size of Computers " + computers.size());
 		for (ComputerPlayer computer : computers) {
-			System.out.println("CardCount " + cardCount);
-			System.out.println(computer.getMyCards().size() - cardCount);
+		//	System.out.println("CardCount " + cardCount);
+			//System.out.println(computer.getMyCards().size() - cardCount);
 			Assert.assertEquals(
 					Math.abs(computer.getMyCards().size() - cardCount) <= 1,
 					true);
 			for(Card card: cards){
-				System.out.println("Card: " + card.getName());
+				//System.out.println("Card: " + card.getName());
 			}
 			for (Card card : computer.getMyCards()) {
-				System.out.println("compCard " + card.getName());
+				//System.out.println("compCard " + card.getName());
 				if (!cards.remove(card)) {
 					System.out.println("gello" + !cards.remove(card));
 					Assert.fail("Duplicate card!");

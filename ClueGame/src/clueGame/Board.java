@@ -189,9 +189,10 @@ public class Board {
 	public void loadConfigFiles() {
 		parseLegend();
 		parseLayout();
-		parsePeople();
-		if(cards.isEmpty())
+		if(cards.isEmpty()){
+			parsePeople();
 			parseCards();
+		}
 	}
 
 	public void parsePeople() {
@@ -215,6 +216,7 @@ public class Board {
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
 		}
+		System.out.println("correct size " +comps.size());
 	}
 	// Be sure to trim the color, we don't want spaces around the name
 		public Color convertColor(String strColor) {
@@ -421,36 +423,30 @@ public class Board {
 		Random rand = new Random();
 		int j=-1;
 		ArrayList<Card> pile = new ArrayList<Card>();
+		rand.setSeed(rand.nextLong());
 		while(!cardListN.isEmpty()){
-			rand.setSeed(rand.nextLong());
 			int i = rand.nextInt(cardListN.size());
 			if(pile.size()<3){
 				pile.add(cardListN.get(i));
+				//System.out.println("cards item " +cardListN.get(i).getName());
 				cardListN.remove(i);
 			}
 			else{
-				pile.clear();
+				System.out.println("");
 				if(j==-1){
-					human.setMyCards(pile);
+					human.setMyCards((List<Card>) pile.clone());
 					++j;
 					pile.clear();
 				}
 				else{
-					comps.get(j).setMyCards(pile);
+					if(j<=5){
+					comps.get(j).setMyCards((List<Card>) pile.clone());
 					++j;
+					}
 					pile.clear();
 				}
 				pile.clear();
 			}
-		}
-		for(Card c : human.getMyCards()){
-			System.out.println("human C: " + c.getName());
-		}
-		for(ComputerPlayer p : comps){
-			for(Card ca: p.getMyCards()){
-				System.out.println("comps " + ca.getName());
-			}
-			System.out.println("");
 		}
 	}
 

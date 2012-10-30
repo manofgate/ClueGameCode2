@@ -1,19 +1,25 @@
 package clueGame;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import clueGame.Card.CardType;
 import clueGame.RoomCell.DoorDirection;
+
+
 
 public class Board {
 
@@ -38,7 +44,6 @@ public class Board {
 		cells = new ArrayList<BoardCell>();
 		comps = new ArrayList<ComputerPlayer>();
 		cards = new ArrayList<Card>();
-		human = new HumanPlayer();
 		loadConfigFiles();
 		calcAdjacencies();
 	}
@@ -184,16 +189,79 @@ public class Board {
 	public void loadConfigFiles() {
 		parseLegend();
 		parseLayout();
-		parsePeople();
-		parseCards();
+		if(cards.isEmpty()){
+			parsePeople();
+			parseCards();
+		}
 	}
 
 	public void parsePeople() {
-
+		FileReader legendReader = null;
+		try {
+			legendReader = new FileReader("computer.txt");
+			Scanner reader = new Scanner(legendReader);
+			while (reader.hasNextLine()) {
+				String line = reader.nextLine();
+				String[] space = line.split(", ");
+				String name = space[0];
+				Color c = convertColor(space[1]);
+				if(!name.equals("Mr mober")){
+					ComputerPlayer p = new ComputerPlayer(name, c);
+					comps.add(p);
+				}
+				else{
+					human = new HumanPlayer(name, c);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println(e);
+		}
+		System.out.println("correct size " +comps.size());
 	}
-
+	// Be sure to trim the color, we don't want spaces around the name
+		public Color convertColor(String strColor) {
+			Color color; 
+			try {     
+				// We can use reflection to convert the string to a color
+				Field field = Class.forName("java.awt.Color").getField(strColor.trim());     
+				color = (Color)field.get(null); } 
+			catch (Exception e) {  
+				color = null; // Not defined } 
+			}
+			return color;
+		}
 	public void parseCards() {
-
+		FileReader legendReader = null;
+		try {
+			legendReader = new FileReader("cards.txt");
+			Scanner reader = new Scanner(legendReader);
+			while (reader.hasNextLine()) {
+				String line = reader.nextLine();
+				String[] space = line.split(", ");
+				String name = space[0];
+				String type = space[1];
+				if(type.equalsIgnoreCase("weapon")){
+					
+					Card c = new Card(CardType.WEAPON, name);
+					cards.add(c);
+				}
+				else if(type.equalsIgnoreCase("person")){
+					
+					Card c = new Card(CardType.PERSON, name);
+					cards.add(c);
+				}
+				else if(type.equalsIgnoreCase("room")){
+					Card c = new Card(CardType.ROOM, name);
+					cards.add(c);
+				}
+				else{
+					
+				}
+			}
+			System.out.println("size " + cards.size());
+		} catch (FileNotFoundException e) {
+			System.out.println(e);
+		}
 	}
 
 	public BoardCell getCellAt(int row, int col) {
@@ -349,8 +417,37 @@ public class Board {
 		this.solution = new Solution("Colonel Mustard", "Knife", "Hall");
 	}
 
-	public void deal(ArrayList<String> person) {
-
+	public void deal(ArrayList<Card> cardList) {
+		ArrayList<Card> cardListN = new ArrayList<Card>();
+		cardListN = (ArrayList<Card>) cardList.clone();
+		Random rand = new Random();
+		int j=-1;
+		ArrayList<Card> pile = new ArrayList<Card>();
+		rand.setSeed(rand.nextLong());
+		while(!cardListN.isEmpty()){
+			int i = rand.nextInt(cardListN.size());
+			if(pile.size()<3){
+				pile.add(cardListN.get(i));
+				//System.out.println("cards item " +cardListN.get(i).getName());
+				cardListN.remove(i);
+			}
+			else{
+				System.out.println("");
+				if(j==-1){
+					human.setMyCards((List<Card>) pile.clone());
+					++j;
+					pile.clear();
+				}
+				else{
+					if(j<=5){
+					comps.get(j).setMyCards((List<Card>) pile.clone());
+					++j;
+					}
+					pile.clear();
+				}
+				pile.clear();
+			}
+		}
 	}
 
 	public void deal() {
@@ -369,7 +466,6 @@ public class Board {
 		for(Player player : comps) {
 			if(player.disproveSuggestion(person, room, weapon) != null && turn != comps.indexOf(player) + 1) {
 				cards.add(player.disproveSuggestion(person, room, weapon));
-				break;
 			}
 		}
 		if(cards.size() == 0) return null;

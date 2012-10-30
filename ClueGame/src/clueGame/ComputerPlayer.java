@@ -1,17 +1,22 @@
 package clueGame;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class ComputerPlayer extends Player {
 	private char lastRoomVisited;
+	private List<Card> seenCards;
 
-	public ComputerPlayer() {
-		super();
+	public ComputerPlayer(String name, Color color) {
+		super(name, color);
+		seenCards = new ArrayList<Card>();
 	}
 
 	public ComputerPlayer(List<Card> myCards) {
 		super(myCards);
+		seenCards = new ArrayList<Card>();
 	}
 
 	public char getLastRoomVisited() {
@@ -50,6 +55,7 @@ public class ComputerPlayer extends Player {
 	}
 
 	public void updateSeen(Card seen) {
+		seenCards.add(seen);
 	}
 
 }

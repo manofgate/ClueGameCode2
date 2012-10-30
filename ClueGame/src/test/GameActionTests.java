@@ -1,5 +1,6 @@
 package test;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,7 @@ public class GameActionTests {
 	
 	@Test
 	public void checkPickLocationWithRoom() {
-		ComputerPlayer computer =  new ComputerPlayer();
+		ComputerPlayer computer =  new ComputerPlayer("", Color.BLUE);
 		
 		Set<BoardCell> cells = new HashSet<BoardCell>();
 		cells.add(new RoomCell('k', DoorDirection.DOWN));
@@ -62,7 +63,7 @@ public class GameActionTests {
 	
 	@Test
 	public void checkPickLocationFromRoom() {
-		ComputerPlayer computer =  new ComputerPlayer();
+		ComputerPlayer computer =  new ComputerPlayer("", Color.blue);
 		computer.setLastRoomVisited('k');
 		Set<BoardCell> cells = new HashSet<BoardCell>();
 		cells.add(new RoomCell('k', DoorDirection.DOWN));
@@ -78,7 +79,7 @@ public class GameActionTests {
 	
 	@Test
 	public void checkPickLocationRandomly() {
-		ComputerPlayer computer =  new ComputerPlayer();
+		ComputerPlayer computer =  new ComputerPlayer("", Color.blue);
 		computer.setLastRoomVisited('k');
 		Set<BoardCell> cells = new HashSet<BoardCell>();
 		WalkwayCell cell1 = new WalkwayCell();
@@ -110,7 +111,7 @@ public class GameActionTests {
 	
 	@Test
 	public void checkDisproveSuggestion() {
-		Player player = new ComputerPlayer();
+		Player player = new ComputerPlayer("", Color.blue);
 		List<Card> cards = new ArrayList<Card>();
 		cards.add(new Card(CardType.PERSON, "a"));
 		cards.add(new Card(CardType.PERSON, "b"));
@@ -126,7 +127,7 @@ public class GameActionTests {
 		
 	@Test
 	public void checkDisproveSuggestionOnePlayerMultipleCards() {
-		Player player = new ComputerPlayer();
+		Player player = new ComputerPlayer("", Color.blue);
 		List<Card> cards = new ArrayList<Card>();
 		cards.clear();
 		cards.add(new Card(CardType.PERSON, "a"));
@@ -159,7 +160,7 @@ public class GameActionTests {
 		comps.add(new ComputerPlayer(comp1Cards));
 		comps.add(new ComputerPlayer(comp2Cards));
 		board.setComps(comps);
-		board.setHuman(new HumanPlayer());
+		board.setHuman(new HumanPlayer("", Color.blue));
 		board.setTurn(0);
 		int card1Count = 0;
 		int card2Count = 0;
@@ -179,8 +180,8 @@ public class GameActionTests {
 	@Test
 	public void checkDisproveSuggestionPlayerHasCard() {
 		List<ComputerPlayer> comps = new ArrayList<ComputerPlayer>();
-		comps.add(new ComputerPlayer());
-		comps.add(new ComputerPlayer());
+		comps.add(new ComputerPlayer("", Color.blue));
+		comps.add(new ComputerPlayer("", Color.blue));
 		List<Card> cards = new ArrayList<Card>();
 		cards.add(new Card(CardType.PERSON, "a"));
 		HumanPlayer human = new HumanPlayer(cards);
@@ -191,7 +192,7 @@ public class GameActionTests {
 	
 	@Test
 	public void checkMakeSuggestion() {
-		ComputerPlayer player = new ComputerPlayer();
+		ComputerPlayer player = new ComputerPlayer("", Color.blue);
 		Card card1 = new Card(CardType.PERSON, "a");
 		Card card2 = new Card(CardType.ROOM, "b");
 		Card card3 = new Card(CardType.WEAPON, "c");

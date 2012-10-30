@@ -1,6 +1,6 @@
-Mr. Custard, Yellow
-Miss Scarlet, White
-Mr mober, Red
-Professor Plum, Purple
-Mr. Green, Green
-Mrs. Penguin, Black
+Mr. Custard, YELLOW
+Miss Scarlet, WHITE
+Mr mober, RED
+Professor Plum, PURPLE
+Mr. Green, GREEN
+Mrs. Penguin, BLACK

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import clueGame.Card.CardType;
+
 public class ComputerPlayer extends Player {
 	private char lastRoomVisited;
 	private List<Card> seenCards;
@@ -51,7 +53,25 @@ public class ComputerPlayer extends Player {
 	}
 
 	public Solution createSuggestion() {
-		return null;
+		List<Card> allCards = Board.parseCards();
+		allCards.removeAll(seenCards);
+		List<Card> peopleCards = new ArrayList<Card>();
+		List<Card> weaponCards = new ArrayList<Card>();
+		List<Card> roomCards = new ArrayList<Card>();
+		for(Card card : allCards) {
+			if(card.getCardType() == CardType.PERSON) {
+				peopleCards.add(card);
+			}
+			if(card.getCardType() == CardType.WEAPON) {
+				weaponCards.add(card);
+			}
+			if(card.getCardType() == CardType.ROOM) {
+				roomCards.add(card);
+			}
+		}
+		return new Solution(peopleCards.get((int) (Math.random() * peopleCards.size())).getName(), 
+				weaponCards.get((int) (Math.random() * weaponCards.size())).getName(), 
+				roomCards.get((int) (Math.random() * roomCards.size())).getName());
 	}
 
 	public void updateSeen(Card seen) {

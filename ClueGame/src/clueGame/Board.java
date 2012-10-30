@@ -191,7 +191,7 @@ public class Board {
 		parseLayout();
 		if(cards.isEmpty()){
 			parsePeople();
-			parseCards();
+			cards = parseCards();
 		}
 	}
 
@@ -230,7 +230,8 @@ public class Board {
 			}
 			return color;
 		}
-	public void parseCards() {
+	public static List<Card> parseCards() {
+		List<Card> cards = new ArrayList<Card>();
 		FileReader legendReader = null;
 		try {
 			legendReader = new FileReader("cards.txt");
@@ -262,6 +263,7 @@ public class Board {
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
 		}
+		return cards;
 	}
 
 	public BoardCell getCellAt(int row, int col) {
